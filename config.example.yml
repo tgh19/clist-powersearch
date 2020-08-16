@@ -1,5 +1,5 @@
 # Example config file
-
+# Rename this to config.yml
 default params:
   latitude: 0.000
   longitude: 0.000
