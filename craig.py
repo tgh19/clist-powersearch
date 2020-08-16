@@ -118,9 +118,13 @@ def load_blacklist():
 
 def main():
     """Run the main procedure"""
-    for query in QUERIES:
-        category = query[1]
-        query = query[0]
+    for query_params in CONFIG.get('queries'):
+        query = query_params.get('query')
+        city = query_params.get('city', get_default('city'))
+        sort_by = query_params.get('sort_by', get_default('sort_by'))
+        category = query_params.get('cat', None)
+        max_results = query_params.get('max', get_default('max_results'))
+        posted_today = query_params.get('posted_today', get_default('posted_today'))
 
         print('\nRUNNING QUERY:'.upper())
         print(f' - city: {city}')
