@@ -144,24 +144,24 @@ def main():
                 -1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-2-1'
 
         for_sale = CraigslistForSale(
-            site='austin',
+            site=city,
             category=category,
             filters={
                 'query': query,
                 'has_image': True,
-                'posted_today': True
+                'posted_today': posted_today
             }
         )
 
         results = for_sale.get_results(
-            sort_by='newest',
+            sort_by=sort_by,
             geotagged=True,
             include_details=True
         )
 
         i = 0
         for result in results:
-            if i >= 3:
+            if i >= max_results:
                 break
 
             i += 1
