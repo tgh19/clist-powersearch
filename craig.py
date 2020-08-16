@@ -166,6 +166,7 @@ def main():
 
             i += 1
 
+            post_id = result.get('id')
             url = result.get('url')
             name = result.get('name').upper()
             details = result.get('body')
@@ -176,14 +177,18 @@ def main():
                 print(f'post blacklisted: {name}')
                 continue
 
-            image_name = f'images/{query}_{i}.png'
+            image_filenames = [f'images/{post_id}_{j}.png' for j, item in enumerate(result.get('images'))]
+
+            image_html = ''
+            for filename in image_filenames:
+                image_html += f'<img src="{filename}" height=200> '
 
             post = f"""
             <hr class="solid">
             <h2>{name}</h2>
             <p>
             <a href="{url}">
-            <img src="{image_name}" height=200>
+                        {image_html}
             </a>
             </br></br>
             Price: {result.get('price')}
@@ -194,10 +199,11 @@ def main():
             </br>
             </p>
             """
+            for i, image_filename in enumerate(image_filenames):
+                image_data = requests.get(result.get('images')[i])
+                image_file = Image.open(BytesIO(image_data.content))
+                image_file.save(fp=image_filename, format='png')
 
-            response = requests.get(result.get('images')[0])
-            img = Image.open(BytesIO(response.content))
-            img.save(fp=image_name, format='png')
             create_html_preview(post=post)
 
             save = input('save? (y): ')
@@ -205,8 +211,8 @@ def main():
             if save == 'y':
                 add_post_to_result_page(post=post)
             else:
-                os.remove(image_name)
-                with open('blacklist.txt', 'a') as bl_file:
+                for image_filename in image_filenames:
+                    os.remove(image_filename)
                     bl_file.write(f'{url}\n')
 
     open_html('results.html')
