@@ -2,3 +2,4 @@ python-craigslist
 pillow
 requests
 geopy
+pyaml
