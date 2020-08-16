@@ -17,8 +17,8 @@ import yaml
 with open('config.yml') as config_file:
     CONFIG = yaml.load(config_file, yaml.Loader)
 
-# Put your latlong in here for distance calculation
-MY_LAT_LONG = (0, 0)
+def get_default(param, config=CONFIG):
+    return config.get('default params').get(param)
 
 # Cleanup old results
 if os.path.exists('results.html'):
