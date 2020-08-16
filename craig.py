@@ -183,19 +183,29 @@ def main():
             for filename in image_filenames:
                 image_html += f'<img src="{filename}" height=200> '
 
+            # Build post HTML dynamically
             post = f"""
+                <!DOCTYPE html>
+                <html>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
             <hr class="solid">
-            <h2>{name}</h2>
-            <p>
+
+                <h4 style="text-align:center">
+                    {name}
+                </h4>
+                
+                <p style="padding: 35px">
             <a href="{url}">
                         {image_html}
             </a>
             </br></br>
-            Price: {result.get('price')}
+                        <b>Price:</b> {result.get('price')}
             </br>
-            Distance: {round(distance, 2)} miles
+                        <b>Distance:</b> {distance} miles
             </br>
-            Details: {details}
+                        <b>Details:</b> {details}
             </br>
             </p>
             """
