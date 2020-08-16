@@ -64,6 +64,10 @@ for file_name in os.listdir('./images/'):
         print(f'removing {file_name}')
         os.remove(os.path.join('./images/', file_name))
 
+# Create blacklist file if it doesn't exist
+if not os.path.exists('blacklist.txt'):
+    open('blacklist.txt', 'w+')
+
 
 def open_html(url):
     """open url in chrome"""
