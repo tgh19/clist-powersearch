@@ -216,7 +216,7 @@ def main():
 
             create_html_preview(post=post)
 
-            save = input('save? (y): ')
+            save = input('save this post? (y,n): ')
 
             if save == 'y':
                 add_post_to_result_page(post=post)
