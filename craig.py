@@ -122,7 +122,15 @@ def main():
         category = query[1]
         query = query[0]
 
-        print(f'\nquerying {query} in category {category}')
+        print('\nRUNNING QUERY:'.upper())
+        print(f' - city: {city}')
+        print(f' - query: {query}')
+        print(f' - sort_by: {sort_by}')
+        print(f' - category: {category}')
+        print(f' - max_results: {max_results}')
+        print(f' - posted_today: {posted_today}\n')
+
+        print('RESULTS')
 
         # Custom category
         if category == 'gym':
