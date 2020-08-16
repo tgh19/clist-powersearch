@@ -29,7 +29,7 @@ if os.path.exists('results.html'):
 
 # Create page header
 now = datetime.now()
-current_time = now.strftime("%H:%M:%S")
+current_time = now.strftime("%A %I:%M %p")
 with open('results.html', 'w') as results_page:
     results_page.write(f"""
         <h1>Craigslist PowerSearch Results</h1>
