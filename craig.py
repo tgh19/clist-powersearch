@@ -96,7 +96,7 @@ def create_html_preview(post):
     open_html('preview.html')
 
 
-def create_html_page(post):
+def add_post_to_result_page(post):
     """creates an html result page"""
     print('Writing page')
     with open('results.html', 'a+') as page:
@@ -191,7 +191,7 @@ def main():
             save = input('save? (y): ')
 
             if save == 'y':
-                create_html_page(post=post)
+                add_post_to_result_page(post=post)
             else:
                 os.remove(image_name)
                 with open('blacklist.txt', 'a') as bl_file:
