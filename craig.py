@@ -20,7 +20,10 @@ with open('config.yml') as config_file:
 def get_default(param, config=CONFIG):
     return config.get('default params').get(param)
 
-# Cleanup old results
+# Load lat long from config
+lat = get_default('latitude')
+lng = get_default('longitude')
+MY_LAT_LONG = (lat, lng)
 if os.path.exists('results.html'):
     os.remove('results.html')
 
