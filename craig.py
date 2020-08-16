@@ -11,21 +11,11 @@ import requests
 from craigslist import CraigslistForSale
 from geopy.distance import geodesic
 from PIL import Image
+import yaml
 
 
-# Load queries from file
-line_num = 0
-with open('queries.yml') as query_file:
-    QUERIES = []
-    for line in query_file:
-        line_num += 1
-        if not line.startswith('#'):
-            try:
-                query = line.split(',')[0].strip()
-                category = line.split(',')[1][:-1].strip()
-                QUERIES.append([query, category])
-            except:
-                print(f'Failed to load query on line: {line_num}: {line}')
+with open('config.yml') as config_file:
+    CONFIG = yaml.load(config_file, yaml.Loader)
 
 # Put your latlong in here for distance calculation
 MY_LAT_LONG = (0, 0)
