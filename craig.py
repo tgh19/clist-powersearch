@@ -31,12 +31,28 @@ if os.path.exists('results.html'):
 now = datetime.now()
 current_time = now.strftime("%A %I:%M %p")
 with open('results.html', 'w') as results_page:
-    results_page.write(f"""
-        <h1>Craigslist PowerSearch Results</h1>
+    results_page.write(
+        f"""
+            <!DOCTYPE html>
+            <html>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
+            <head>
+                <title>
+                    Craigslist PowerSearch Results
+                </title>
+            </head>
+            <body>
+                <h1 style="text-align:center">
+                    Craigslist PowerSearch Results
+                </h1>
+                <p style="text-align:center">
+                    {current_time}
+                </p>
         </br>
-        Time: {current_time}
-        </br>
-    """)
+        """
+    )
 
 # Make images folder if it dne
 if not os.path.exists('images'):
