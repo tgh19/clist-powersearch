@@ -5,6 +5,7 @@ import os
 import webbrowser
 from datetime import datetime
 from io import BytesIO
+import shutil
 
 # Third party
 import requests
@@ -24,6 +25,8 @@ def get_default(param, config=CONFIG):
 lat = get_default('latitude')
 lng = get_default('longitude')
 MY_LAT_LONG = (lat, lng)
+
+# Cleanup old results page
 if os.path.exists('results.html'):
     os.remove('results.html')
 
@@ -50,7 +53,7 @@ with open('results.html', 'w') as results_page:
                 <p style="text-align:center">
                     {current_time}
                 </p>
-        </br>
+            </br>
         """
     )
 
@@ -172,9 +175,13 @@ def main():
             details = result.get('body')
             distance = round(geodesic(MY_LAT_LONG, result.get('geotag')).miles, 2)
 
+            # Reload blacklist each time 
             blacklist = load_blacklist()
+
             if url in blacklist:
-                print(f'post blacklisted: {name}')
+                # Don't count blacklisted post as a result
+                i -= 1 
+                print(f'skipping blacklisted post: {name}')
                 continue
 
             image_filenames = [f'images/{post_id}_{j}.png' for j, item in enumerate(result.get('images'))]
@@ -190,24 +197,24 @@ def main():
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
-            <hr class="solid">
+                <hr class="solid">
 
                 <h4 style="text-align:center">
                     {name}
                 </h4>
                 
                 <p style="padding: 35px">
-            <a href="{url}">
+                    <a href="{url}">
                         {image_html}
-            </a>
-            </br></br>
+                    </a>
+                    </br></br>
                         <b>Price:</b> {result.get('price')}
-            </br>
+                    </br>
                         <b>Distance:</b> {distance} miles
-            </br>
+                    </br>
                         <b>Details:</b> {details}
-            </br>
-            </p>
+                    </br>
+                </p>
             """
             for i, image_filename in enumerate(image_filenames):
                 image_data = requests.get(result.get('images')[i])
@@ -223,6 +230,7 @@ def main():
             else:
                 for image_filename in image_filenames:
                     os.remove(image_filename)
+                with open('blacklist.txt', 'a+') as bl_file:
                     bl_file.write(f'{url}\n')
 
     open_html('results.html')
