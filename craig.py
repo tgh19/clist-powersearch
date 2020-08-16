@@ -169,7 +169,7 @@ def main():
             url = result.get('url')
             name = result.get('name').upper()
             details = result.get('body')
-            distance = geodesic(MY_LAT_LONG, result.get('geotag')).miles
+            distance = round(geodesic(MY_LAT_LONG, result.get('geotag')).miles, 2)
 
             blacklist = load_blacklist()
             if url in blacklist:
