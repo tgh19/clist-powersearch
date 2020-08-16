@@ -12,30 +12,20 @@ from craigslist import CraigslistForSale
 from geopy.distance import geodesic
 from PIL import Image
 
-# Make a query by stating ['search_term', 'category'].
-# Categories can be found at https://pypi.org/project/python-craigslist/
-QUERIES = [
-    [
-        'weight plate',
-        'gym'
-    ],
-    [
-        'bumper plate',
-        'gym'
-    ],
-    [
-        'pulldown machine',
-        'gym'
-    ],
-    [
-        'projector',
-        'ela'
-    ],
-    [
-        'dining table',
-        'fua'
-    ]
-]
+
+# Load queries from file
+line_num = 0
+with open('queries.yml') as query_file:
+    QUERIES = []
+    for line in query_file:
+        line_num += 1
+        if not line.startswith('#'):
+            try:
+                query = line.split(',')[0].strip()
+                category = line.split(',')[1][:-1].strip()
+                QUERIES.append([query, category])
+            except:
+                print(f'Failed to load query on line: {line_num}: {line}')
 
 # Put your latlong in here for distance calculation
 MY_LAT_LONG = (0, 0)
