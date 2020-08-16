@@ -5,7 +5,6 @@ import os
 import webbrowser
 from datetime import datetime
 from io import BytesIO
-import shutil
 
 # Third party
 import requests
@@ -14,17 +13,67 @@ from geopy.distance import geodesic
 from PIL import Image
 import yaml
 
-
+# Globals
 with open('config.yml') as config_file:
     CONFIG = yaml.load(config_file, yaml.Loader)
 
+LAT_LONG = (
+    CONFIG.get('default params').get('latitude'),
+    CONFIG.get('default params').get('longitude')
+)
+
+
+def create_html_preview(post):
+    """creates an html page to preview post"""
+    if os.path.exists('preview.html'):
+        os.remove('preview.html')
+
+    with open('preview.html', 'w') as preview:
+        preview.write('\n')
+        try:
+            preview.write(post)
+        except UnicodeEncodeError:
+            preview.write(str(post.encode('utf-8')))
+
+    open_html('preview.html')
+
+
+def add_post_to_result_page(post):
+    """creates an html result page"""
+    print('Writing page')
+    with open('results.html', 'a+') as page:
+        page.write('\n')
+        try:
+            page.write(post)
+        except UnicodeEncodeError:
+            page.write(str(post.encode('utf-8')))
+
+
+def load_blacklist():
+    """Load in blacklisted posts"""
+    with open('blacklist.txt') as bl_file:
+        blacklist = []
+        for url in bl_file:
+            blacklist.append(url[:-1])
+        return blacklist
+
+
 def get_default(param, config=CONFIG):
+    """get default params from config yaml"""
     return config.get('default params').get(param)
 
-# Load lat long from config
-lat = get_default('latitude')
-lng = get_default('longitude')
-MY_LAT_LONG = (lat, lng)
+
+def open_html(url):
+    """open url in chrome"""
+    webbrowser.register(
+        name='chrome',
+        klass=None,
+        instance=webbrowser.BackgroundBrowser(
+            "C://Program Files (x86)//Google//Chrome//Application//chrome.exe"
+        )
+    )
+    webbrowser.get('chrome').open(url)
+
 
 # Cleanup old results page
 if os.path.exists('results.html'):
@@ -70,53 +119,6 @@ for file_name in os.listdir('./images/'):
 # Create blacklist file if it doesn't exist
 if not os.path.exists('blacklist.txt'):
     open('blacklist.txt', 'w+')
-
-
-def open_html(url):
-    """open url in chrome"""
-    webbrowser.register(
-        name='chrome',
-        klass=None,
-        instance=webbrowser.BackgroundBrowser(
-            "C://Program Files (x86)//Google//Chrome//Application//chrome.exe"
-        )
-    )
-    webbrowser.get('chrome').open(url)
-
-
-def create_html_preview(post):
-    """creates an html page to preview post"""
-    if os.path.exists('preview.html'):
-        os.remove('preview.html')
-
-    with open('preview.html', 'w') as preview:
-        preview.write('\n')
-        try:
-            preview.write(post)
-        except UnicodeEncodeError:
-            preview.write(str(post.encode('utf-8')))
-
-    open_html('preview.html')
-
-
-def add_post_to_result_page(post):
-    """creates an html result page"""
-    print('Writing page')
-    with open('results.html', 'a+') as page:
-        page.write('\n')
-        try:
-            page.write(post)
-        except UnicodeEncodeError:
-            page.write(str(post.encode('utf-8')))
-
-
-def load_blacklist():
-    """Load in blacklisted posts"""
-    with open('blacklist.txt') as bl_file:
-        blacklist = []
-        for url in bl_file:
-            blacklist.append(url[:-1])
-        return blacklist
 
 
 def main():
@@ -173,18 +175,20 @@ def main():
             url = result.get('url')
             name = result.get('name').upper()
             details = result.get('body')
-            distance = round(geodesic(MY_LAT_LONG, result.get('geotag')).miles, 2)
+            distance = round(geodesic(LAT_LONG, result.get('geotag')).miles, 2)
 
-            # Reload blacklist each time 
+            # Reload blacklist each time
             blacklist = load_blacklist()
 
             if url in blacklist:
                 # Don't count blacklisted post as a result
-                i -= 1 
+                i -= 1
                 print(f'skipping blacklisted post: {name}')
                 continue
 
-            image_filenames = [f'images/{post_id}_{j}.png' for j, item in enumerate(result.get('images'))]
+            image_filenames = [
+                f'images/{post_id}_{i}.png' for i, item in enumerate(result.get('images'))
+            ]
 
             image_html = ''
             for filename in image_filenames:
@@ -202,7 +206,7 @@ def main():
                 <h4 style="text-align:center">
                     {name}
                 </h4>
-                
+
                 <p style="padding: 35px">
                     <a href="{url}">
                         {image_html}
@@ -211,6 +215,8 @@ def main():
                         <b>Price:</b> {result.get('price')}
                     </br>
                         <b>Distance:</b> {distance} miles
+                    </br>
+                        <b>City:</b> {city}
                     </br>
                         <b>Details:</b> {details}
                     </br>
@@ -223,7 +229,7 @@ def main():
 
             create_html_preview(post=post)
 
-            save = input('save this post? (y,n): ')
+            save = input(f'save this post? {name} (y,n): ')
 
             if save == 'y':
                 add_post_to_result_page(post=post)

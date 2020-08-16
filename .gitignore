@@ -129,6 +129,6 @@ dmypy.json
 .pyre/
 results.html
 preview.html
-.images/
+images/
 blacklist.txt
 .vscode/settings.json
