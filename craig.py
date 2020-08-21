@@ -5,6 +5,7 @@ import os
 import webbrowser
 from datetime import datetime
 from io import BytesIO
+import time
 
 # Third party
 import requests
@@ -12,6 +13,9 @@ from craigslist import CraigslistForSale
 from geopy.distance import geodesic
 from PIL import Image
 import yaml
+
+# Local
+from email_me import send_email
 
 # Globals
 with open('config.yml') as config_file:
@@ -123,6 +127,8 @@ if not os.path.exists('blacklist.txt'):
 
 def main():
     """Run the main procedure"""
+    mode = get_default('mode')
+
     for query_params in CONFIG.get('queries'):
         query = query_params.get('query')
         city = query_params.get('city', get_default('city'))
@@ -181,8 +187,6 @@ def main():
             blacklist = load_blacklist()
 
             if url in blacklist:
-                # Don't count blacklisted post as a result
-                i -= 1
                 print(f'skipping blacklisted post: {name}')
                 continue
 
@@ -227,9 +231,19 @@ def main():
                 image_file = Image.open(BytesIO(image_data.content))
                 image_file.save(fp=image_filename, format='png')
 
-            create_html_preview(post=post)
+            if mode == 'filter':
+                create_html_preview(post=post)
+                save = input(f'save this post? {name} (y,n): ')
 
-            save = input(f'save this post? {name} (y,n): ')
+            elif mode == 'scan':
+                send_email(
+                    post_title=name+' - ' + result.get('price'),
+                    post_url=url
+                )
+                # Add page to blacklist
+                with open('blacklist.txt', 'a+') as bl_file:
+                    bl_file.write(f'{url}\n')
+                save = 'y'
 
             if save == 'y':
                 add_post_to_result_page(post=post)
@@ -239,8 +253,23 @@ def main():
                 with open('blacklist.txt', 'a+') as bl_file:
                     bl_file.write(f'{url}\n')
 
-    open_html('results.html')
+    if mode != 'scan':
+        open_html('results.html')
 
 
 if __name__ == '__main__':
-    main()
+    print(get_default('source_email_password'))
+    while True:
+        try:
+            main()
+            send_email(
+                post_title = 'Successfully ran queries',
+                post_url = ''
+            )
+        except:
+            send_email(
+                post_title = 'Something went wrong',
+                post_url = ''
+            )
+        print('sleeping 30 min...')
+        time.sleep(30*60) # Sleep before running again
