@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  clist-powersearch:
+    build:
+      context: ./image/
+      dockerfile: Dockerfile
+    volumes:
+      - ./code:/app/code
+      - ./config:/app/config
+    command: ['python', '-u', 'craig.py']
