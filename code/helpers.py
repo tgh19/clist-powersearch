@@ -1,6 +1,7 @@
 """Common code used by other files"""
 
 import os
+import sys
 import json
 import yaml
 
@@ -10,8 +11,12 @@ CONFIG_PATH = CONFIG_DIR + 'config.yml'
 BLACKLIST_PATH = CONFIG_DIR + 'blacklist.txt'
 
 # Load in config yaml
-with open(CONFIG_PATH) as config_file:
-    CONFIG = yaml.load(config_file, yaml.Loader)
+try:
+    with open(CONFIG_PATH) as config_file:
+        CONFIG = yaml.load(config_file, yaml.Loader)
+except FileNotFoundError:
+    print('no config.yml found')
+    sys.exit(0)
 
 # Create blacklist file if it doesn't exist
 if not os.path.exists(BLACKLIST_PATH):
