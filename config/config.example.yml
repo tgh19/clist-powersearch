@@ -1,0 +1,25 @@
+# Example config file
+# Rename this to config.yml
+default params:
+  latitude: 0.000
+  longitude: 0.000
+  city: dallas
+  posted_today: True
+  max_results: 3
+  sort_by: newest
+  mode: email
+  email_password: ''
+  source_email: ''
+  dest_email: ''
+  sleep_time: 30 # min to sleep between queries (default 30)
+
+queries:
+  - query: gym machine
+    cat: gym # category (found at https://pypi.org/project/python-craigslist/)
+    max: 10  # override default max_results
+    city: pittsburgh # override default city
+    sort_by: newest # override default sort
+
+  - query: weight bench
+    cat: gym
+    max: 10
