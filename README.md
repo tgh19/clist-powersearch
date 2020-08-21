@@ -2,20 +2,7 @@
 
 Ever found a sweet deal on craigslist, but realized you were too late? 
 
-This project was built to discover recent items posted on craigslist using multiple configurable queries to search for all of the items you want. Simply fill out queries in the `config.yml` (use `config.example.yml` as a guide) and then run `python craig.py` (make sure to install `requirements.txt` too).
+This project was built to discover recent items posted on craigslist using multiple configurable queries to search for all of the items you want. Simply fill out queries in the `config.yml` (use `config.example.yml` as a guide), ensure docker and docker-compose are installed, then run `docker-compose up -d`.
 
-If you see a post you like, when prompted, enter `y` to save the post or press enter to blacklist the post. Blacklisting a post will add the post's URL to `blacklists.txt` so you don't have to look at it over and over again.
+You can create a new gmail account and enter its credentials for the source email in `email_me.py`, then set the recipient address to be your cell provider's email to sms address. For instance {phone_number}@vtext.com for verizon.
 
-Current Features:
-- Picture previews with link to original post
-- Estimated distance based on your latitude and longitude
-- Post blacklisting
-- Results page with aggregation of all saved posts
-
-Ideas For New Features:
-- Better style on html
-- Support for other browsers than chrome
-- Support for macOS
-- Front end
-- Containerization
-- And many more...
