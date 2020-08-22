@@ -94,7 +94,6 @@ if __name__ == '__main__':
     while True:
         try:
             main()
-            send_email('successfully ran queries')
         except:
             send_email('something went wrong')
 
