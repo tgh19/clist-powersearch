@@ -13,6 +13,7 @@ from geopy.distance import geodesic
 from email_me import send_email
 from helpers import get_default, load_blacklist, get_queries
 from helpers import blacklist_result
+from helpers import make_tiny
 
 # Globals
 LAT_LONG = (get_default('latitude'), get_default('longitude'))
@@ -38,9 +39,10 @@ def email_results(results, max_results):
         if url in blacklist:
             print(f'skipping blacklisted post: {name}')
             continue
-
-        send_email(f'{name} - {distance} mi - {price} - {url}')
         blacklist_result(url)
+
+        url = make_tiny(url)
+        send_email(f'{name} - {distance} mi - {price} - {url}')
 
 
 def main():

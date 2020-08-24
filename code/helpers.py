@@ -5,6 +5,10 @@ import sys
 import json
 import yaml
 
+import contextlib 
+from urllib.parse import urlencode           
+from urllib.request import urlopen 
+
 # Globals
 CONFIG_DIR = '/app/config/'
 CONFIG_PATH = CONFIG_DIR + 'config.yml'
@@ -46,3 +50,9 @@ def blacklist_result(url):
     """Adds result to the blacklist"""
     with open(BLACKLIST_PATH, 'a+') as bl_file:
         bl_file.write(f'{url}\n')
+
+
+def make_tiny(url):
+    request_url = ('http://tinyurl.com/api-create.php?' + urlencode({'url':url}))
+    with contextlib.closing(urlopen(request_url)) as response:
+        return response.read().decode('utf-8')
